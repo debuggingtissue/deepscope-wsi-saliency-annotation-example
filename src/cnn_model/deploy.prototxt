@@ -1,9 +1,9 @@
-name: "PathoTuneHikRightleft"
+name: "PathoTuneJoeNbrRightleft"
 layer {
   name: "data"
   type: "Input"
   top: "data"
-  input_param { shape: { dim: 1 dim: 3 dim: 256 dim: 256 } }
+  input_param { shape: { dim: 1 dim: 3 dim: 227 dim: 227 } }
 }
 layer {
   name: "conv1"
@@ -334,9 +334,8 @@ layer {
   }
 }
 layer {
-  name: "loss"
-  type: "SoftmaxWithLoss"
+  name: "prob"
+  type: "Softmax"
   bottom: "fc8_patho"
-  bottom: "label"
-  top: "loss"
+  top: "prob"
 }
