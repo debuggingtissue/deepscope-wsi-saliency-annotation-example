@@ -30,7 +30,6 @@ class ImagePreprocessing:
         cropped_image = image.crop((left, top, right, bottom))
         return cropped_image
 
-
     def scale_image(self, image, new_size):
 
         maxsize = (new_size, new_size)
