@@ -1,6 +1,3 @@
-import caffe
-from image_preprocessing import ImagePreprocessing
-
 if __name__ == '__main__':
     print("yadda1")
     # net = caffe.Classifier("cnn_model/deploy.prototxt",

@@ -1,5 +1,9 @@
 #!/bin/bash
 
+###################################
+#             INPUTS              #
+###################################
+
 VIRTUAL_ENV_27=${1?Error: no virtual environment directory path given}
 VIRTUAL_ENV_36=${2?Error: no virtual environment directory path given}
 INPUT_DIRECTORY_PATH=${3?Error: no input directory path given}
@@ -11,15 +15,20 @@ OUTPUT_DIRECTORY_PATH=${4?Error: no output directory path given}
 
 # 1_split_svs_images_to_image_patches
 #####################################
-SPLIT_SVS_INPUT_DIRECTORY_PATH=${INPUT_DIRECTORY_PATH}
-SPLIT_SVS_OUTPUT_DIRECTORY_PATH="${OUTPUT_DIRECTORY_PATH}/1_split_svs_images_to_image_patches"
-RESOLUTION_LEVEL=2
-OVERLAP_PERCENTAGE=50
-WINDOW_SIZE=800
+S1_SPLIT_SVS_INPUT_DIRECTORY_PATH=${INPUT_DIRECTORY_PATH}
+S1_SPLIT_SVS_OUTPUT_DIRECTORY_PATH="${OUTPUT_DIRECTORY_PATH}/1_split_svs_images_to_image_patches"
+S1_RESOLUTION_LEVEL=2
+S1_OVERLAP_PERCENTAGE=50
+S1_WINDOW_SIZE=800
 
 # 2_preprocess_image_patches
 #####################################
-
+S2_PREPROCESS_IMAGE_PATCHES_INPUT_DIRECTORY_PATH=${INPUT_DIRECTORY_PATH}
+S2_PREPROCESS_IMAGE_PATCHES_OUTPUT_DIRECTORY_PATH="${OUTPUT_DIRECTORY_PATH}/2_preprocess_image_patches"
+S2_IMAGE_PATCH_INPUT_SIZE=${S1_WINDOW_SIZE}
+S2_FIRST_CENTERMOST_CROP_SIZE = 512
+S2_DOWNSCALED_SIZE = 256
+S2_SECOND_CENTERMOST_CROP_SIZE = 227
 
 ###################################
 #               RUN               #
@@ -27,11 +36,18 @@ WINDOW_SIZE=800
 
 source "${VIRTUAL_ENV_36}/bin/activate"
 python3.6 1_split_svs_images_to_image_patches/deepslide-svs-wsi-to-jpeg-patch-generator-master/src/wsi_svs_to_jpeg_tiles.py \
-  -i $SPLIT_SVS_INPUT_DIRECTORY_PATH \
-  -o $SPLIT_SVS_OUTPUT_DIRECTORY_PATH \
-  -r $RESOLUTION_LEVEL \
-  -op $OVERLAP_PERCENTAGE \
-  -ws $WINDOW_SIZE
+  -i $S1_SPLIT_SVS_INPUT_DIRECTORY_PATH \
+  -o $S1_SPLIT_SVS_OUTPUT_DIRECTORY_PATH \
+  -r $S1_RESOLUTION_LEVEL \
+  -op $S1_OVERLAP_PERCENTAGE \
+  -ws $S1_WINDOW_SIZE
+
+python3.6 2_preprocess_image_patches/image_preprocessing.py -i S2_PREPROCESS_IMAGE_PATCHES_INPUT_DIRECTORY_PATH \
+  -o S2_PREPROCESS_IMAGE_PATCHES_OUTPUT_DIRECTORY_PATH \
+  -is S2_IMAGE_PATCH_INPUT_SIZE \
+  -fc S2_FIRST_CENTERMOST_CROP_SIZE \
+  -ds S2_DOWNSCALED_SIZE \
+  -sc S2_SECOND_CENTERMOST_CROP_SIZE
 
 #source "${VIRTUAL_ENV_27}/bin/activate"
 #python 3_predict_saliency_for_image_patches/deepscope_saliency_classifier.py

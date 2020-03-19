@@ -1,11 +1,5 @@
 from PIL import Image
 
-INPUT_SIZE = 800
-FIRST_CENTERMOST_CROP_SIZE = 512
-DOWNSCALED_SIZE = 256
-SECOND_CENTERMOST_CROP_SIZE = 227
-
-
 class ImagePreprocessing:
 
     def preprocess_image(self, input_image_path):
