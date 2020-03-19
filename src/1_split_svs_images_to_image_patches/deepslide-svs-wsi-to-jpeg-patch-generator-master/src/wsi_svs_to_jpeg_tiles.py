@@ -5,7 +5,7 @@ import sys
 from math import ceil
 from os import listdir
 from os.path import isfile, join
-from PIL.Image import Image
+from PIL import Image
 import openslide
 
 import argparse
