@@ -1,72 +1,92 @@
 from PIL import Image
 import argparse
+from os.path import join
+from utils import path_utils
 
 
-class ImagePreprocessing:
+def output_preprocessed_image_patch_to_output_directory(full_image_path,
+                                                        output_directory_path,
+                                                        first_centermost_crop_size,
+                                                        downscale_to_size,
+                                                        second_centermost_crop_size):
+    input_image = Image.open(full_image_path)
+    first_centermost_crop_image = crop_to_the_centermost(input_image, first_centermost_crop_size)
+    scaled_image = scale_image(first_centermost_crop_image, downscale_to_size)
+    second_centermost_crop_image = crop_to_the_centermost(scaled_image, second_centermost_crop_size)
 
-    def preprocess_image(self, input_image_path):
-        input_image = Image.open(input_image_path)
-        first_centermost_crop_image = self.crop_to_the_centermost(input_image, FIRST_CENTERMOST_CROP_SIZE)
-        scaled_image = self.scale_image(first_centermost_crop_image, DOWNSCALED_SIZE)
-        second_centermost_crop_image = self.crop_to_the_centermost(scaled_image, SECOND_CENTERMOST_CROP_SIZE)
+    print(full_image_path)
+    print(full_image_path.split('/')[-2])
+    print(full_image_path.split('/')[-1][:-4])
+    output_subfolder = join(output_directory_path, full_image_path.split('/')[-1][:-4])
+    print(output_subfolder)
+    print("halla2")
 
-        return second_centermost_crop_image
-
-
-    def crop_to_the_centermost(self, image, new_size):
-        print(image)
-        width, height = image.size  # Get dimensions
-
-        left = (width - new_size) / 2
-        top = (height - new_size) / 2
-        right = (width + new_size) / 2
-        bottom = (height + new_size) / 2
-
-        # Crop the center of the image
-        cropped_image = image.crop((left, top, right, bottom))
-        return cropped_image
-
-    def scale_image(self, image, new_size):
-
-        maxsize = (new_size, new_size)
-        image.thumbnail(maxsize, Image.ANTIALIAS)
-        return image
+    # if not os.path.exists(output_subfolder):
+    #     os.makedirs(output_subfolder)
+    # output_image_name = join(output_subfolder,
+    #                          full_image_path.split('/')[-1][:-4] + '_' + str(x_index) + '_' + str(
+    #                              y_index) + '.jpg')
+    # # print(output_image_name)
+    # patch_rgb.save(output_image_name)
+    # print("Tile", tile_number, "/", total_number_of_patches, "created")
+    # tile_number = tile_number + 1
+    #
+    # return second_centermost_crop_image
 
 
-parser = argparse.ArgumentParser(description='Split a WSI at a specific resolution in a .SVS file into .JPEG tiles.')
+def crop_to_the_centermost(image, new_size):
+    width, height = image.size  # Get dimensions
+
+    left = (width - new_size) / 2
+    top = (height - new_size) / 2
+    right = (width + new_size) / 2
+    bottom = (height + new_size) / 2
+
+    # Crop the center of the image
+    cropped_image = image.crop((left, top, right, bottom))
+    return cropped_image
+
+
+def scale_image(image, new_size):
+    maxsize = (new_size, new_size)
+    image.thumbnail(maxsize, Image.ANTIALIAS)
+    return image
+
+
+parser = argparse.ArgumentParser(description='Scale image patches for DeepScope.')
 parser.add_argument("-i", "--input_folder_path", type=str, help="The path to the input folder.", required=True)
 parser.add_argument("-o", "--output_folder_path", type=str, help="The path to the output folder."
                                                                  " If output folder doesn't exists at runtime "
                                                                  "the script will create it.",
                     required=True)
-parser.add_argument("-s", "--start_at_image_name", type=str, default=None, help="Resume from a certain filename."
-                                                                                " Default value is None.")
-parser.add_argument("-r", "--resolution_level", type=int, default=0, choices=[0, 1, 2, 3],
-                    help="Resolution level for image to be split."
-                         " Low level equals high resolution, lowest level is 0. Choose between {0, 1, 2, 3}."
+parser.add_argument("-fc", "--first_centermost_crop_size", type=int, default=0, help="First centermost crop size."
+                                                                                     " Default value is 0.")
+
+parser.add_argument("-ds", "--downscale_to_size", type=int, default=0,
+                    help="Size to scale first centermost image crop down to."
                          " Default value is 0.")
-parser.add_argument("-op", "--overlap_percentage", type=int, default=0,
-                    help="Overlapping percentage between patches."
-                         " Default value is 0.")
-parser.add_argument("-ws", "--window_size", type=int, default=10000,
-                    help="Size for square window"
-                         " Default value is 10000.")
+
+parser.add_argument("-sc", "--second_centermost_crop_size", type=int, default=0, help="Second centermost crop size."
+                                                                                      " Default value is 0.")
 
 args = parser.parse_args()
 
 input_folder_path = args.input_folder_path
 output_folder_path = args.output_folder_path
-start_at_image_name = args.start_at_image_name
-resolution_level = args.resolution_level
-overlapping_percentage = float("{0:.2f}".format(args.overlap_percentage / 100))
-window_size = args.window_size
+first_centermost_crop_size = args.first_centermost_crop_size
+downscale_to_size = args.downscale_to_size
+second_centermost_crop_size = args.second_centermost_crop_size
 
+path_utils.halt_script_if_path_does_not_exist(input_folder_path)
+path_utils.create_directory_if_directory_does_not_exist_at_path(output_folder_path)
+case_directory_paths = path_utils.create_full_paths_to_directories_in_directory_path(input_folder_path)
 
-
-
-2_preprocess_image_patches/image_preprocessing.py -i S2_PREPROCESS_IMAGE_PATCHES_INPUT_DIRECTORY_PATH \
-  -o S2_PREPROCESS_IMAGE_PATCHES_OUTPUT_DIRECTORY_PATH \
-  -is S2_IMAGE_PATCH_INPUT_SIZE \
-  -fc S2_FIRST_CENTERMOST_CROP_SIZE \
-  -ds S2_DOWNSCALED_SIZE \
-  -sc S2_SECOND_CENTERMOST_CROP_SIZE
+for case_directory_path in case_directory_paths:
+    full_image_patch_paths = path_utils.create_full_paths_to_files_in_directory_path(case_directory_path)
+    for full_image_patch_path in full_image_patch_paths:
+        output_path = output_folder_path + '/'
+        output_preprocessed_image_patch_to_output_directory(full_image_patch_path,
+                                                            output_folder_path,
+                                                            first_centermost_crop_size,
+                                                            downscale_to_size,
+                                                            second_centermost_crop_size)

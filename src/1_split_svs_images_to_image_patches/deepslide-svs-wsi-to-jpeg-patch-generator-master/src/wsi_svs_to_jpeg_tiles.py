@@ -2,7 +2,6 @@
 
 import os
 import sys
-from math import ceil
 from os import listdir
 from os.path import isfile, join
 from PIL import Image
@@ -158,11 +157,6 @@ image_names = [f for f in listdir(input_folder_path) if isfile(join(input_folder
 
 if '.DS_Store' in image_names:
     image_names.remove('.DS_Store')
-
-if start_at_image_name is not None:
-    start = image_names.index(args.start_at)
-    print("skipping the first", start)
-    image_names = image_names[start + 2:]
 
 for image_name in image_names:
     full_image_path = input_folder_path + '/' + image_name
