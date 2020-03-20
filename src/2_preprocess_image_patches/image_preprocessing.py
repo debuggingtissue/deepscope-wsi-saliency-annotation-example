@@ -14,24 +14,15 @@ def output_preprocessed_image_patch_to_output_directory(full_image_path,
     scaled_image = scale_image(first_centermost_crop_image, downscale_to_size)
     second_centermost_crop_image = crop_to_the_centermost(scaled_image, second_centermost_crop_size)
 
-    print(full_image_path)
-    print(full_image_path.split('/')[-2])
-    print(full_image_path.split('/')[-1][:-4])
-    output_subfolder = join(output_directory_path, full_image_path.split('/')[-1][:-4])
-    print(output_subfolder)
-    print("halla2")
+    case_id = full_image_path.split('/')[-2]
+    image_patch_id = full_image_path.split('/')[-1][:-4]
 
-    # if not os.path.exists(output_subfolder):
-    #     os.makedirs(output_subfolder)
-    # output_image_name = join(output_subfolder,
-    #                          full_image_path.split('/')[-1][:-4] + '_' + str(x_index) + '_' + str(
-    #                              y_index) + '.jpg')
-    # # print(output_image_name)
-    # patch_rgb.save(output_image_name)
-    # print("Tile", tile_number, "/", total_number_of_patches, "created")
-    # tile_number = tile_number + 1
-    #
-    # return second_centermost_crop_image
+    output_case_subfolder = join(output_directory_path, case_id)
+    path_utils.create_directory_if_directory_does_not_exist_at_path(output_case_subfolder)
+
+    output_image_name = join(output_case_subfolder,
+                             image_patch_id + '_preprocessed' + '.jpg')
+    second_centermost_crop_image.save(output_image_name)
 
 
 def crop_to_the_centermost(image, new_size):
