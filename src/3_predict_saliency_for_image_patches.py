@@ -26,9 +26,7 @@ path_utils.create_directory_if_directory_does_not_exist_at_path(output_folder_pa
 
 
 
-
 # if __name__ == '__main__':
-
 
 # IMAGE_FILE_CANCER = 'test_images/cancer.jpg'
 # IMAGE_FILE_WHITE_DUMMY = 'test_images/white_dummy.jpg'

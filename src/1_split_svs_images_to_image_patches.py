@@ -6,6 +6,8 @@ from os import listdir
 from os.path import isfile, join
 from PIL import Image
 import openslide
+from utils import path_utils
+
 
 import argparse
 
@@ -147,18 +149,12 @@ resolution_level = args.resolution_level
 overlapping_percentage = float("{0:.2f}".format(args.overlap_percentage / 100))
 window_size = args.window_size
 
-if not os.path.exists(input_folder_path):
-    sys.exit("Error: Input folder doesn't exist")
 
-if not os.path.exists(output_folder_path):
-    os.makedirs(output_folder_path)
+path_utils.halt_script_if_path_does_not_exist(input_folder_path)
+path_utils.create_directory_if_directory_does_not_exist_at_path(output_folder_path)
+full_image_name_paths = path_utils.create_full_paths_to_files_in_directory_path(input_folder_path)
 
-image_names = [f for f in listdir(input_folder_path) if isfile(join(input_folder_path, f))]
 
-if '.DS_Store' in image_names:
-    image_names.remove('.DS_Store')
-
-for image_name in image_names:
-    full_image_path = input_folder_path + '/' + image_name
+for full_image_name_path in full_image_name_paths:
     output_path = output_folder_path + '/'
-    output_jpeg_tiles(full_image_path, output_path, resolution_level, overlapping_percentage, window_size)
+    output_jpeg_tiles(full_image_name_path, output_path, resolution_level, overlapping_percentage, window_size)
