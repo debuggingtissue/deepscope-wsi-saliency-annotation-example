@@ -65,32 +65,3 @@ np.set_printoptions(formatter={'all':lambda x: str(x)})
 
 case_predictions = np.hstack((case_predictions[0], id_column))
 print case_predictions
-
-#
-# case_predictions_with_id = []
-#
-
-# print(case_predictions_with_id)
-
-# cases
-# image_patches
-
-# one prediction file for each case
-
-
-# if __name__ == '__main__':
-
-# IMAGE_FILE_CANCER = 'test_images/cancer.jpg'
-# IMAGE_FILE_WHITE_DUMMY = 'test_images/white_dummy.jpg'
-# IMAGE_FILE_NORMAL = 'test_images/normal.jpg'
-# IMAGE_FILE_PURPLE_DUMMY = 'test_images/purple_dummy.jpeg'
-#
-# image_processor = ImagePreprocessing()
-#
-# input_image_cancer = caffe.io.load_image(image_processor.preprocess_image(IMAGE_FILE_CANCER))
-# input_image_white = caffe.io.load_image(IMAGE_FILE_WHITE_DUMMY)
-# input_image_normal = caffe.io.load_image(IMAGE_FILE_NORMAL)
-# input_image_lilla = caffe.io.load_image(IMAGE_FILE_PURPLE_DUMMY)
-#
-# pred = net.predict([input_image_cancer])
-# print(pred)
