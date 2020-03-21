@@ -1,8 +1,9 @@
 import caffe
 import argparse
 import numpy as np
+import csv
 
-from utils import path_utils, image_patch_file_name_parser
+from utils import path_utils, image_patch_file_name_parser,image_patch_file_name_constants
 
 
 def load_images_patches_to_caffe(full_image_patches_paths):
@@ -43,9 +44,21 @@ case_predictions = []
 for full_case_path in full_case_paths:
     full_image_patches_paths = path_utils.create_full_paths_to_files_in_directory_path(full_case_path)
 
-    for full_image_patches_path in full_image_patches_paths:
-        full_image_name = full_image_patches_path.split('/')[-1]
-        print (image_patch_file_name_parser.parse_image_patch_file_name_to_dict(full_image_name))
+    with open(output_folder_path + '/' + full_case_path.split('/')[-1] + 'prediction_data' + '.csv', 'w') as csvfile:
+        fieldnames = [image_patch_file_name_constants.CASE_ID,
+                      image_patch_file_name_constants.X_COORDINATE,
+                      image_patch_file_name_constants.Y_COORDINATE,
+                      image_patch_file_name_constants.WIDTH,
+                      image_patch_file_name_constants.HEIGHT,
+                      image_patch_file_name_constants.RESOLUTION_LEVEL]
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+        writer.writeheader()
+
+        for full_image_patches_path in full_image_patches_paths:
+            full_image_name = full_image_patches_path.split('/')[-1]
+            writer.writerow(image_patch_file_name_parser.parse_image_patch_file_name_to_dict(full_image_name))
+
 
     # loaded_image_patches = load_images_patches_to_caffe(full_image_patches_paths)
     # predictions_for_image_patches = predict_saliency_for_loaded_image_patches(loaded_image_patches)
