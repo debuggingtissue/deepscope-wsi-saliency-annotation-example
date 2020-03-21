@@ -7,44 +7,13 @@ from os.path import isfile, join
 from PIL import Image
 import openslide
 from utils import path_utils
-
+from utils import enums
+from utils import svs_utils
 
 import argparse
 
 compression_factor = 1
 Image.MAX_IMAGE_PIXELS = 1e10
-
-from enum import Enum, IntEnum
-
-
-class Axis(Enum):
-    X = 1
-    Y = 2
-
-
-class SVSLevelRatio(IntEnum):
-    LEVEL_0_BASE = 1
-    LEVEL_1 = 4
-    LEVEL_2 = 16
-    LEVEL_3 = 32
-
-
-class ResolutionLevel(IntEnum):
-    LEVEL_0_BASE = 0
-    LEVEL_1 = 1
-    LEVEL_2 = 2
-    LEVEL_3 = 3
-
-
-def get_SVS_level_ratio(resolution_level):
-    if resolution_level == ResolutionLevel.LEVEL_0_BASE:
-        return SVSLevelRatio.LEVEL_0_BASE
-    elif resolution_level == ResolutionLevel.LEVEL_1:
-        return SVSLevelRatio.LEVEL_1
-    elif resolution_level == ResolutionLevel.LEVEL_2:
-        return SVSLevelRatio.LEVEL_2
-    elif resolution_level == ResolutionLevel.LEVEL_3:
-        return SVSLevelRatio.LEVEL_3
 
 
 def get_start_positions(width, height, window_size, axis, overlapping_percentage):
@@ -53,7 +22,7 @@ def get_start_positions(width, height, window_size, axis, overlapping_percentage
     start_position = 0
     start_positions.append(start_position)
 
-    dimension = width if axis == Axis.X else height
+    dimension = width if axis == enums.Axis.X else height
 
     while not (start_position + (window_size * (1 - overlapping_percentage))) > dimension:
         start_position = start_position + (window_size * (1 - overlapping_percentage))
@@ -62,7 +31,8 @@ def get_start_positions(width, height, window_size, axis, overlapping_percentage
     return start_positions
 
 
-def output_jpeg_tiles(full_image_path, full_output_path,
+def output_jpeg_tiles(full_image_path,
+                      full_output_path,
                       resolution_level,
                       overlapping_percentage,
                       window_size):  # converts svs image with meta data into just the jpeg image
@@ -82,6 +52,7 @@ def output_jpeg_tiles(full_image_path, full_output_path,
     total_number_of_patches = len(x_start_positions) * len(y_start_positions)
     tile_number = 1
 
+    id = 0
     for x_index, x_start_position in enumerate(x_start_positions):
         for y_index, y_start_position in enumerate(y_start_positions):
 
@@ -90,7 +61,10 @@ def output_jpeg_tiles(full_image_path, full_output_path,
             patch_width = x_end_position - x_start_position
             patch_height = y_end_position - y_start_position
 
-            SVS_level_ratio = get_SVS_level_ratio(resolution_level)
+            if not ((patch_height == window_size) and (patch_width == window_size)):
+                continue
+
+            SVS_level_ratio = svs_utils.get_SVS_level_ratio(resolution_level)
             patch = img.read_region((x_start_position * SVS_level_ratio, y_start_position * SVS_level_ratio),
                                     resolution_level,
                                     (patch_width, patch_height))
@@ -103,10 +77,9 @@ def output_jpeg_tiles(full_image_path, full_output_path,
             print("Tile size for tile number " + str(tile_number) + ":" + str(patch.size))
 
             # compress the image
-            #patch_rgb = patch_rgb.resize(
+            # patch_rgb = patch_rgb.resize(
             #    (int(patch_rgb.size[0] / compression_factor), int(patch_rgb.size[1] / compression_factor)),
             #    Image.ANTIALIAS)
-
 
             # save the image
             output_subfolder = join(full_output_path, full_image_path.split('/')[-1][:-4])
@@ -114,11 +87,12 @@ def output_jpeg_tiles(full_image_path, full_output_path,
                 os.makedirs(output_subfolder)
             output_image_name = join(output_subfolder,
                                      full_image_path.split('/')[-1][:-4] + '_' + str(x_index) + '_' + str(
-                                         y_index) + '.jpg')
+                                         y_index) + '_id_' + str(id) + '.jpg')
             # print(output_image_name)
             patch_rgb.save(output_image_name)
             print("Tile", tile_number, "/", total_number_of_patches, "created")
             tile_number = tile_number + 1
+            id = id + 1
 
 
 parser = argparse.ArgumentParser(description='Split a WSI at a specific resolution in a .SVS file into .JPEG tiles.')
@@ -149,11 +123,9 @@ resolution_level = args.resolution_level
 overlapping_percentage = float("{0:.2f}".format(args.overlap_percentage / 100))
 window_size = args.window_size
 
-
 path_utils.halt_script_if_path_does_not_exist(input_folder_path)
 path_utils.create_directory_if_directory_does_not_exist_at_path(output_folder_path)
 full_image_name_paths = path_utils.create_full_paths_to_files_in_directory_path(input_folder_path)
-
 
 for full_image_name_path in full_image_name_paths:
     output_path = output_folder_path + '/'

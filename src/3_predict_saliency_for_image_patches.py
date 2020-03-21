@@ -1,5 +1,6 @@
 import caffe
 import argparse
+import numpy as np
 
 from utils import path_utils
 
@@ -44,7 +45,32 @@ for full_case_path in full_case_paths:
     loaded_image_patches = load_images_patches_to_caffe(full_image_patches_paths)
     predictions_for_image_patches = predict_saliency_for_loaded_image_patches(loaded_image_patches)
     case_predictions.append(predictions_for_image_patches)
-    print(case_predictions)
+
+ids = []
+id = 0
+for case_prediction in case_predictions[0]:
+    ids.append(id)
+    id = id + 1
+
+print(ids)
+print(np.asarray(ids))
+
+id_array = np.asarray(ids)
+id_column = id_array.reshape((-1, 1))
+
+print (case_predictions)
+print (id_column)
+
+np.set_printoptions(formatter={'all':lambda x: str(x)})
+
+case_predictions = np.hstack((case_predictions[0], id_column))
+print case_predictions
+
+#
+# case_predictions_with_id = []
+#
+
+# print(case_predictions_with_id)
 
 # cases
 # image_patches
