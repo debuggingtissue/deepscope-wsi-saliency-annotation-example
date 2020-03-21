@@ -2,7 +2,7 @@ import caffe
 import argparse
 import numpy as np
 
-from utils import path_utils
+from utils import path_utils, image_patch_file_name_parser
 
 
 def load_images_patches_to_caffe(full_image_patches_paths):
@@ -42,26 +42,31 @@ full_case_paths = path_utils.create_full_paths_to_directories_in_directory_path(
 case_predictions = []
 for full_case_path in full_case_paths:
     full_image_patches_paths = path_utils.create_full_paths_to_files_in_directory_path(full_case_path)
-    loaded_image_patches = load_images_patches_to_caffe(full_image_patches_paths)
-    predictions_for_image_patches = predict_saliency_for_loaded_image_patches(loaded_image_patches)
-    case_predictions.append(predictions_for_image_patches)
 
-ids = []
-id = 0
-for case_prediction in case_predictions[0]:
-    ids.append(id)
-    id = id + 1
+    for full_image_patches_path in full_image_patches_paths:
+        full_image_name = full_image_patches_path.split('/')[-1]
+        print (image_patch_file_name_parser.parse_image_patch_file_name_to_dict(full_image_name))
 
-print(ids)
-print(np.asarray(ids))
+    # loaded_image_patches = load_images_patches_to_caffe(full_image_patches_paths)
+    # predictions_for_image_patches = predict_saliency_for_loaded_image_patches(loaded_image_patches)
+    # case_predictions.append(predictions_for_image_patches)
 
-id_array = np.asarray(ids)
-id_column = id_array.reshape((-1, 1))
-
-print (case_predictions)
-print (id_column)
-
-np.set_printoptions(formatter={'all':lambda x: str(x)})
-
-case_predictions = np.hstack((case_predictions[0], id_column))
-print case_predictions
+# ids = []
+# id = 0
+# for case_prediction in case_predictions[0]:
+#     ids.append(id)
+#     id = id + 1
+#
+# print(ids)
+# print(np.asarray(ids))
+#
+# id_array = np.asarray(ids)
+# id_column = id_array.reshape((-1, 1))
+#
+# print (case_predictions)
+# print (id_column)
+#
+# np.set_printoptions(formatter={'all':lambda x: str(x)})
+#
+# case_predictions = np.hstack((case_predictions[0], id_column))
+# print case_predictions

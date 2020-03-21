@@ -49,7 +49,6 @@ def output_jpeg_tiles(full_image_path,
     total_number_of_patches = len(x_start_positions) * len(y_start_positions)
     tile_number = 1
 
-    id = 0
     for x_index, x_start_position in enumerate(x_start_positions):
         for y_index, y_start_position in enumerate(y_start_positions):
 
@@ -58,7 +57,8 @@ def output_jpeg_tiles(full_image_path,
             patch_width = x_end_position - x_start_position
             patch_height = y_end_position - y_start_position
 
-            if not ((patch_height == window_size) and (patch_width == window_size)):
+            is_image_patch_size_equal_to_window_size = ((patch_height == window_size) and (patch_width == window_size))
+            if not is_image_patch_size_equal_to_window_size:
                 continue
 
             SVS_level_ratio = svs_utils.get_SVS_level_ratio(resolution_level)
@@ -79,19 +79,21 @@ def output_jpeg_tiles(full_image_path,
             #    Image.ANTIALIAS)
 
             # save the image
-            output_subfolder = join(full_output_path, full_image_path.split('/')[-1][:-4])
-            if not os.path.exists(output_subfolder):
-                os.makedirs(output_subfolder)
+
+            case_id = full_image_path.split('/')[-1][:-4]
+
+            output_subfolder = join(full_output_path, case_id)
+            path_utils.create_directory_if_directory_does_not_exist_at_path(output_subfolder)
+
             output_image_name = join(output_subfolder,
                                      image_patch_file_name_builder.build_image_patch_file_name(
-                                         full_image_path.split('/')[-1][:-4], resolution_level, x_start_position,
+                                         case_id, resolution_level, x_start_position,
                                          y_start_position, patch_width, patch_height))
 
             # print(output_image_name)
             patch_rgb.save(output_image_name)
             print("Tile", tile_number, "/", total_number_of_patches, "created")
             tile_number = tile_number + 1
-            id = id + 1
 
 
 parser = argparse.ArgumentParser(

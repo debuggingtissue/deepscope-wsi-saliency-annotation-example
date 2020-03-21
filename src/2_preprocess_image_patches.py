@@ -21,7 +21,7 @@ def output_preprocessed_image_patch_to_output_directory(full_image_path,
     path_utils.create_directory_if_directory_does_not_exist_at_path(output_case_subfolder)
 
     output_image_name = join(output_case_subfolder,
-                             'preprocessed_' + image_patch_id + '.jpg')
+                             image_patch_id + '.jpg')
     second_centermost_crop_image.save(output_image_name)
 
 
