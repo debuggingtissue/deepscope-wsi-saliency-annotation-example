@@ -12,31 +12,8 @@ def create_jpeg_thumbnail_of_wsi(full_image_path,
                                  full_output_path):
     resolution_level = enums.ResolutionLevel.LEVEL_3
     img = openslide.OpenSlide(full_image_path)
-    width, height = img.level_dimensions[resolution_level]
-    print ()
     thumbnail = img.associated_images["thumbnail"]
 
-    #
-    # print (thumbnail)
-    # print (thumbnail.width)
-    # print (thumbnail.height)
-    # #   print("converting ", full_image_path, " with width ", width, ", height ", height, " and overlap ",
-    # #         overlapping_percentage)
-    #
-    # x_start_position = 0
-    # y_start_position = 0
-    # x_end_position = width
-    # y_end_position = height
-    #
-    # SVS_level_ratio = svs_utils.get_SVS_level_ratio(resolution_level)
-    # patch = img.read_region((x_start_position * SVS_level_ratio, y_start_position * SVS_level_ratio),
-    #                         resolution_level,
-    #                         (x_end_position, y_start_position))
-    # patch.load()
-    # patch_rgb = Image.new("RGB", patch.size, (255, 255, 255))
-    # patch_rgb.paste(patch, mask=patch.split()[3])
-    #
-    # # save the image
     output_subfolder = join(full_output_path, full_image_path.split('/')[-1][:-4])
     if not os.path.exists(output_subfolder):
         os.makedirs(output_subfolder)
@@ -44,7 +21,6 @@ def create_jpeg_thumbnail_of_wsi(full_image_path,
                              full_image_path.split('/')[-1][:-4] + '.png')
     print(output_image_name)
     thumbnail.save(output_image_name)
-
 
 
 parser = argparse.ArgumentParser(description='Saliency visualization.')

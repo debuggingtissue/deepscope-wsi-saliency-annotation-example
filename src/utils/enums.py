@@ -1,5 +1,6 @@
 from enum import Enum, IntEnum
 
+
 class Axis(Enum):
     X = 1
     Y = 2

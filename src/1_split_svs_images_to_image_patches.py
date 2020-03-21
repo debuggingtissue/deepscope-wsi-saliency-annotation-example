@@ -6,10 +6,7 @@ from os import listdir
 from os.path import isfile, join
 from PIL import Image
 import openslide
-from utils import path_utils
-from utils import enums
-from utils import svs_utils
-
+from utils import path_utils, enums, svs_utils, image_patch_file_name_builder
 import argparse
 
 compression_factor = 1
@@ -43,8 +40,8 @@ def output_jpeg_tiles(full_image_path,
     #   print("converting ", full_image_path, " with width ", width, ", height ", height, " and overlap ",
     #         overlapping_percentage)
 
-    x_start_positions = get_start_positions(width, height, window_size, Axis.X, overlapping_percentage)
-    y_start_positions = get_start_positions(width, height, window_size, Axis.Y, overlapping_percentage)
+    x_start_positions = get_start_positions(width, height, window_size, enums.Axis.X, overlapping_percentage)
+    y_start_positions = get_start_positions(width, height, window_size, enums.Axis.Y, overlapping_percentage)
 
     #    print(x_start_positions)
     #    print(y_start_positions)
@@ -86,8 +83,10 @@ def output_jpeg_tiles(full_image_path,
             if not os.path.exists(output_subfolder):
                 os.makedirs(output_subfolder)
             output_image_name = join(output_subfolder,
-                                     full_image_path.split('/')[-1][:-4] + '_' + str(x_index) + '_' + str(
-                                         y_index) + '_id_' + str(id) + '.jpg')
+                                     image_patch_file_name_builder.build_image_patch_file_name(
+                                         full_image_path.split('/')[-1][:-4], resolution_level, x_start_position,
+                                         y_start_position, patch_width, patch_height))
+
             # print(output_image_name)
             patch_rgb.save(output_image_name)
             print("Tile", tile_number, "/", total_number_of_patches, "created")
@@ -95,18 +94,23 @@ def output_jpeg_tiles(full_image_path,
             id = id + 1
 
 
-parser = argparse.ArgumentParser(description='Split a WSI at a specific resolution in a .SVS file into .JPEG tiles.')
-parser.add_argument("-i", "--input_folder_path", type=str, help="The path to the input folder.", required=True)
+parser = argparse.ArgumentParser(
+    description='Split a WSI at a specific resolution in a .SVS file into .JPEG tiles.')
+parser.add_argument("-i", "--input_folder_path", type=str, help="The path to the input folder.",
+                    required=True)
 parser.add_argument("-o", "--output_folder_path", type=str, help="The path to the output folder."
                                                                  " If output folder doesn't exists at runtime "
                                                                  "the script will create it.",
                     required=True)
+
 parser.add_argument("-s", "--start_at_image_name", type=str, default=None, help="Resume from a certain filename."
                                                                                 " Default value is None.")
 parser.add_argument("-r", "--resolution_level", type=int, default=0, choices=[0, 1, 2, 3],
+
                     help="Resolution level for image to be split."
                          " Low level equals high resolution, lowest level is 0. Choose between {0, 1, 2, 3}."
                          " Default value is 0.")
+
 parser.add_argument("-op", "--overlap_percentage", type=int, default=0,
                     help="Overlapping percentage between patches."
                          " Default value is 0.")
@@ -129,4 +133,4 @@ full_image_name_paths = path_utils.create_full_paths_to_files_in_directory_path(
 
 for full_image_name_path in full_image_name_paths:
     output_path = output_folder_path + '/'
-    output_jpeg_tiles(full_image_name_path, output_path, resolution_level, overlapping_percentage, window_size)
+output_jpeg_tiles(full_image_name_path, output_path, resolution_level, overlapping_percentage, window_size)
