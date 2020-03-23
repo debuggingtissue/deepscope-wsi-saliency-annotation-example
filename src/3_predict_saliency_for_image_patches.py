@@ -49,7 +49,7 @@ for full_case_path in full_case_paths:
     predictions_for_image_patches = predict_saliency_for_loaded_image_patches(loaded_image_patches)
     case_predictions.append(predictions_for_image_patches)
 
-    with open(output_folder_path + '/' + full_case_path.split('/')[-1] + '_' + 'prediction_data' + '.csv',
+    with open(output_folder_path + '/' + full_case_path.split('/')[-1] + '.csv',
               'w') as csvfile:
         fieldnames = [image_patch_file_name_constants.CASE_ID,
                       image_patch_file_name_constants.X_COORDINATE,

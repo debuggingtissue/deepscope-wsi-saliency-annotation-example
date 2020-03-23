@@ -11,6 +11,7 @@ class SVSLevelRatio(IntEnum):
     LEVEL_1 = 4
     LEVEL_2 = 16
     LEVEL_3 = 32
+    THUMBNAIL = 104
 
 
 class ResolutionLevel(IntEnum):
@@ -18,4 +19,4 @@ class ResolutionLevel(IntEnum):
     LEVEL_1 = 1
     LEVEL_2 = 2
     LEVEL_3 = 3
-    LEVEL_4 = 4
+    THUMBNAIL = 4

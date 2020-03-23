@@ -9,3 +9,5 @@ def get_SVS_level_ratio(resolution_level):
         return SVSLevelRatio.LEVEL_2
     elif resolution_level == ResolutionLevel.LEVEL_3:
         return SVSLevelRatio.LEVEL_3
+    elif resolution_level == ResolutionLevel.THUMBNAIL:
+        return SVSLevelRatio.THUMBNAIL
