@@ -44,25 +44,25 @@ S4_CREATE_SALIENCY_VISUALIZATION_OUTPUT_DIRECTORY_PATH="${S0_OUTPUT_DIRECTORY_PA
 #               RUN               #
 ###################################
 
-#source "${S0_VIRTUAL_ENV_36}/bin/activate"
-#python3.6 1_split_svs_images_to_image_patches.py \
-#  -i $S1_SPLIT_SVS_S0_INPUT_DIRECTORY_PATH \
-#  -o $S1_SPLIT_SVS_OUTPUT_DIRECTORY_PATH \
-#  -r $S1_RESOLUTION_LEVEL \
-#  -op $S1_OVERLAP_PERCENTAGE \
-#  -ws $S1_WINDOW_SIZE
+source "${S0_VIRTUAL_ENV_36}/bin/activate"
+python3.6 1_split_svs_images_to_image_patches.py \
+  -i $S1_SPLIT_SVS_S0_INPUT_DIRECTORY_PATH \
+  -o $S1_SPLIT_SVS_OUTPUT_DIRECTORY_PATH \
+  -r $S1_RESOLUTION_LEVEL \
+  -op $S1_OVERLAP_PERCENTAGE \
+  -ws $S1_WINDOW_SIZE
 #
-#python3.6 2_preprocess_image_patches.py \
-#  -i $S2_PREPROCESS_IMAGE_PATCHES_INPUT_DIRECTORY_PATH \
-#  -o $S2_PREPROCESS_IMAGE_PATCHES_OUTPUT_DIRECTORY_PATH \
-#  -fc $S2_FIRST_CENTERMOST_CROP_SIZE \
-#  -ds $S2_DOWNSCALED_SIZE \
-#  -sc $S2_SECOND_CENTERMOST_CROP_SIZE
-#
-#source "${S0_VIRTUAL_ENV_27}/bin/activate"
-#python 3_predict_saliency_for_image_patches.py \
-#  -i $S3_PREDITCT_SALIENCY_INPUT_DIRECTORY_PATH \
-#  -o $S3_PREDITCT_SALIENCY_OUTPUT_DIRECTORY_PATH
+python3.6 2_preprocess_image_patches.py \
+  -i $S2_PREPROCESS_IMAGE_PATCHES_INPUT_DIRECTORY_PATH \
+  -o $S2_PREPROCESS_IMAGE_PATCHES_OUTPUT_DIRECTORY_PATH \
+  -fc $S2_FIRST_CENTERMOST_CROP_SIZE \
+  -ds $S2_DOWNSCALED_SIZE \
+  -sc $S2_SECOND_CENTERMOST_CROP_SIZE
+
+source "${S0_VIRTUAL_ENV_27}/bin/activate"
+python 3_predict_saliency_for_image_patches.py \
+  -i $S3_PREDITCT_SALIENCY_INPUT_DIRECTORY_PATH \
+  -o $S3_PREDITCT_SALIENCY_OUTPUT_DIRECTORY_PATH
 
 source "${S0_VIRTUAL_ENV_36}/bin/activate"
 python3.6 4_create_saliency_visualization.py \

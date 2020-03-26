@@ -37,14 +37,8 @@ def output_jpeg_tiles(full_image_path,
     img = openslide.OpenSlide(full_image_path)
     width, height = img.level_dimensions[resolution_level]
 
-    #   print("converting ", full_image_path, " with width ", width, ", height ", height, " and overlap ",
-    #         overlapping_percentage)
-
     x_start_positions = get_start_positions(width, height, window_size, enums.Axis.X, overlapping_percentage)
     y_start_positions = get_start_positions(width, height, window_size, enums.Axis.Y, overlapping_percentage)
-
-    #    print(x_start_positions)
-    #    print(y_start_positions)
 
     total_number_of_patches = len(x_start_positions) * len(y_start_positions)
     tile_number = 1
@@ -61,7 +55,8 @@ def output_jpeg_tiles(full_image_path,
             if not is_image_patch_size_equal_to_window_size:
                 continue
 
-            SVS_level_ratio = svs_utils.get_SVS_level_ratio(resolution_level)
+            SVS_level_ratio = int(
+                svs_utils.get_SVS_level_ratio(img, enums.ResolutionLevel.LEVEL_0_BASE, resolution_level))
             patch = img.read_region((x_start_position * SVS_level_ratio, y_start_position * SVS_level_ratio),
                                     resolution_level,
                                     (patch_width, patch_height))
@@ -90,7 +85,6 @@ def output_jpeg_tiles(full_image_path,
                                          case_id, resolution_level, x_start_position,
                                          y_start_position, patch_width, patch_height))
 
-            # print(output_image_name)
             patch_rgb.save(output_image_name)
             print("Tile", tile_number, "/", total_number_of_patches, "created")
             tile_number = tile_number + 1
@@ -131,8 +125,10 @@ window_size = args.window_size
 
 path_utils.halt_script_if_path_does_not_exist(input_folder_path)
 path_utils.create_directory_if_directory_does_not_exist_at_path(output_folder_path)
-full_image_name_paths = path_utils.create_full_paths_to_files_in_directory_path(input_folder_path)
 
-for full_image_name_path in full_image_name_paths:
-    output_path = output_folder_path + '/'
-output_jpeg_tiles(full_image_name_path, output_path, resolution_level, overlapping_percentage, window_size)
+full_tcga_download_directories_paths = path_utils.create_full_paths_to_directories_in_directory_path(input_folder_path)
+for full_tcga_download_directories_path in full_tcga_download_directories_paths:
+    full_image_name_paths = path_utils.create_full_paths_to_files_in_directory_path(full_tcga_download_directories_path)
+    for full_image_name_path in full_image_name_paths:
+        output_path = output_folder_path + '/'
+    output_jpeg_tiles(full_image_name_path, output_path, resolution_level, overlapping_percentage, window_size)

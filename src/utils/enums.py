@@ -6,14 +6,6 @@ class Axis(Enum):
     Y = 2
 
 
-class SVSLevelRatio(IntEnum):
-    LEVEL_0_BASE = 1
-    LEVEL_1 = 4
-    LEVEL_2 = 16
-    LEVEL_3 = 32
-    THUMBNAIL = 104
-
-
 class ResolutionLevel(IntEnum):
     LEVEL_0_BASE = 0
     LEVEL_1 = 1

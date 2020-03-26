@@ -1,13 +1,20 @@
-from .enums import ResolutionLevel, SVSLevelRatio
+from .enums import ResolutionLevel
 
-def get_SVS_level_ratio(resolution_level):
-    if resolution_level == ResolutionLevel.LEVEL_0_BASE:
-        return SVSLevelRatio.LEVEL_0_BASE
-    elif resolution_level == ResolutionLevel.LEVEL_1:
-        return SVSLevelRatio.LEVEL_1
-    elif resolution_level == ResolutionLevel.LEVEL_2:
-        return SVSLevelRatio.LEVEL_2
-    elif resolution_level == ResolutionLevel.LEVEL_3:
-        return SVSLevelRatio.LEVEL_3
-    elif resolution_level == ResolutionLevel.THUMBNAIL:
-        return SVSLevelRatio.THUMBNAIL
+
+def get_SVS_level_ratio(svs_image, from_resolution_level, to_resolution_level):
+    if from_resolution_level == ResolutionLevel.THUMBNAIL:
+        from_resolution_level_width = svs_image.associated_images["thumbnail"].size[0]
+    else:
+        from_resolution_level_width = svs_image.level_dimensions[from_resolution_level][0]
+
+    if to_resolution_level == ResolutionLevel.THUMBNAIL:
+        to_resolution_level_width = svs_image.associated_images["thumbnail"].size[0]
+    else:
+        to_resolution_level_width = svs_image.level_dimensions[to_resolution_level][0]
+
+    if from_resolution_level >= to_resolution_level:
+        ratio = (to_resolution_level_width / from_resolution_level_width)
+    else:
+        ratio = (from_resolution_level_width / to_resolution_level_width)
+
+    return ratio

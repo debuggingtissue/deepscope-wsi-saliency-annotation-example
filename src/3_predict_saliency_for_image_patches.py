@@ -41,8 +41,10 @@ path_utils.create_directory_if_directory_does_not_exist_at_path(output_folder_pa
 
 full_case_paths = path_utils.create_full_paths_to_directories_in_directory_path(input_folder_path)
 
-case_predictions = []
 for full_case_path in full_case_paths:
+
+    case_predictions = []
+
     full_image_patches_paths = path_utils.create_full_paths_to_files_in_directory_path(full_case_path)
 
     loaded_image_patches = load_images_patches_to_caffe(full_image_patches_paths)

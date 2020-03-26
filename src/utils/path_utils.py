@@ -21,9 +21,11 @@ def get_directory_paths_in_directory(directory_path):
 
 def get_file_names_in_directory(path_to_directory):
     file_names = [f for f in listdir(path_to_directory) if isfile(join(path_to_directory, f))]
+    file_names.reverse()
     if '.DS_Store' in file_names:
         file_names.remove('.DS_Store')
     return file_names
+
 
 def create_full_paths_to_directories_in_directory_path(path_to_directory):
     directory_names = get_directory_paths_in_directory(path_to_directory)
