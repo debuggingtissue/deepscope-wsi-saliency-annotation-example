@@ -21,7 +21,8 @@ def get_svs_image_of_wsi(full_image_name_path):
     return img
 
 
-def draw_prediction_annotations_onto_thumbnail(svs_image, thumbnail, full_cvs_path, output_directory_path):
+def draw_prediction_annotations_onto_thumbnail(svs_image, thumbnail, full_cvs_path, output_directory_path,
+                                               accuracy_percentage_threshold):
     TINT_COLOR = (0, 255, 0)  # Black
     TRANSPARENCY = .20  # Degree of transparency, 0-100%
     OPACITY = int(255 * TRANSPARENCY)
@@ -33,7 +34,7 @@ def draw_prediction_annotations_onto_thumbnail(svs_image, thumbnail, full_cvs_pa
             saliency_prediction = float(row[image_patch_predictions_constants.PREDICTION_VALUE_SALIENT])
             case_id = row[image_patch_file_name_constants.CASE_ID]
 
-            if saliency_prediction > 0.95:
+            if saliency_prediction > accuracy_percentage_threshold:
                 resolution_level = int(row[image_patch_file_name_constants.RESOLUTION_LEVEL])
 
                 x_coordinate = scale(int(row[image_patch_file_name_constants.X_COORDINATE]), resolution_level,
@@ -62,7 +63,7 @@ def scale(value, to_resolution_level, from_resolution_level, svs_image):
 
 
 parser = argparse.ArgumentParser(description='Saliency visualization.')
-parser.add_argument("-svs", "--svs_input_folder_path", type=str, help="The path to the SVS input folder.",
+parser.add_argument("-svs", "--svs_input_folder_path", type=str, help=" The path to the SVS input folder.",
                     required=True)
 parser.add_argument("-csv", "--csv_input_folder_path", type=str, help="The path to the CSV input folder.",
                     required=True)
@@ -70,12 +71,16 @@ parser.add_argument("-o", "--output_folder_path", type=str, help="The path to th
                                                                  " If output folder doesn't exists at runtime "
                                                                  "the script will create it.",
                     required=True)
+parser.add_argument("-apt", "--accuracy_percentage_threshold", type=float,
+                    help="Accuracy percentage threshold for showing annotations",
+                    required=True)
 
 args = parser.parse_args()
 
 svs_input_folder_path = args.svs_input_folder_path
 csv_input_folder_path = args.csv_input_folder_path
 output_folder_path = args.output_folder_path
+accuracy_percentage_threshold = args.accuracy_percentage_threshold
 
 path_utils.halt_script_if_path_does_not_exist(svs_input_folder_path)
 path_utils.halt_script_if_path_does_not_exist(csv_input_folder_path)
@@ -103,4 +108,5 @@ for full_tcga_download_directories_path_index, full_tcga_download_directory_path
                                                thumbnail,
                                                full_image_patch_data_dict_paths[
                                                    full_tcga_download_directories_path_index],
-                                               output_path)
+                                               output_path,
+                                               accuracy_percentage_threshold)
