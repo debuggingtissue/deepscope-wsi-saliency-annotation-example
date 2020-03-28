@@ -23,7 +23,7 @@ Link to the DeepScope paper: https://europepmc.org/article/med/29601065
     
         cd my/path/to/deepscope-wsi-saliency-annotation-example
 
-6. Install the dependencies using the `requirements.txt` file
+6. Install the dependencies using the `requirements-python36.txt` file
 
         pip install -r requirements-python36.txt
 
@@ -42,7 +42,7 @@ Link to the DeepScope paper: https://europepmc.org/article/med/29601065
     
         cd my/path/to/deepscope-wsi-saliency-annotation-example
 
-6. Install the dependencies using the `requirements.txt` file
+6. Install the dependencies using the `requirements-python27.txt` file
 
         pip install -r requirements-python27.txt
 
