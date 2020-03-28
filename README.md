@@ -52,5 +52,5 @@ Link to the DeepScope paper: https://europepmc.org/article/med/29601065
 
 6. Run the Python script with desired arguments
     
-        source run.sh  absolute-path/to/name-of-python27-virtual-environment absolute-path/to/name-of-python36-virtual-environment absolute-path/to/input-folder absolute-path/to/jpeg-tiles-folder
+        source run.sh absolute-path/to/name-of-python27-virtual-environment absolute-path/to/name-of-python36-virtual-environment absolute-path/to/input-folder absolute-path/to/jpeg-tiles-folder
    
